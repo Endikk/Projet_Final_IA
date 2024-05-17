@@ -10,9 +10,10 @@ Ensuite, nous avons utilisé LABEL STUDIO pour annoter les images avec les label
 - **`.env`** : Contient les variables d'environnement.
 - **`main.py`** : Contient les fonctions pour télécharger, comparer et gérer les images.
 - **`requirements.txt`** : Contient les importations des modules systèmes et tiers.
+- **`annotations.json`** : Votre fichier JSON provenant de votre label studio.
 - **Répertoires** :
-  - `images` : Stocke les images téléchargées.
-  - `images_labels` : Stocke les images annotées.
+  - `images` : Stocke les images téléchargées. (Création automatique)
+  - `images_labels` : Stocke les images annotées. (Création automatique)
 
 ### Détails Techniques
 
