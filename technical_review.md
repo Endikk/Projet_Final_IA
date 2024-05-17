@@ -1,9 +1,9 @@
-## Description du Projet et Technique
+## Description du Projet et l'Aspect technique
 
 ### Explication de ce Projet
 
-Ce projet a été conçu dans le cadre de notre Bachelor en Intelligence Artificielle. L'objectif est de récupérer des images à partir d'une caméra de la Métropole de Lyon accessible via une URL.  
-Notre script télécharge ces images toutes les 60 secondes. Ensuite, nous avons utilisé LABEL STUDIO pour annoter les images avec les labels suivants : Car, Pedestrian, Truck, Scooter, Motorbike, Bus, Bicycle, et Motor Scooter. Une fois les annotations terminées, les images annotées sont exportées au format JSON. Une autre partie de notre script peut alors récupérer ces images annotées pour les traiter ultérieurement.
+Ce projet a été conçu dans le cadre de notre Bachelor en Intelligence Artificielle. L'objectif est de récupérer des images à partir d'une caméra de la Métropole de Lyon accessible via une URL. Notre script télécharge ces images toutes les 60 secondes.   
+Ensuite, nous avons utilisé LABEL STUDIO pour annoter les images avec les labels suivants : Car, Pedestrian, Truck, Scooter, Motorbike, Bus, Bicycle, et Motor Scooter. Une fois les annotations terminées, les images annotées sont exportées au format JSON. Une autre partie de notre script peut alors récupérer ces images annotées pour les traiter ultérieurement.
 
 ### Structure du Projet
 
