@@ -32,12 +32,15 @@ Avant de commencer, assurez-vous d'avoir les éléments suivants installés sur 
 
     # Étape 3 :    
     cd Projet_Final_IA
+
+    # Étape 4 : Pour ouvrir le projet
+    code .
     ```
 
 3. **Installer les dépendances Python :**
 
     ```bash
-    # Étape 4 :
+    # Étape 4 : Via le terminal du projet
     pip install -rf requirements.txt
     ```
 
