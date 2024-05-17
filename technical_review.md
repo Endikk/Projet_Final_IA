@@ -17,6 +17,14 @@ Ensuite, nous avons utilisé LABEL STUDIO pour annoter les images avec les label
 
 ### Détails Techniques
 
+**Label Studio**
+
+- Nous avons annoté nos images via Label Studio avec plusieurs types de labels différents, puis nous les avons exportées au format JSON. C'est ce que vous devez récupérer dans votre projet.
+
+- N'oubliez pas de trouver votre token dans votre compte et de le mettre dans le fichier .env afin que Label Studio et le script puissent communiquer entre eux.
+
+- Pour accéder à Label Studio, vous pouvez utiliser [ce lien](https://app.heartex.com/).
+
 1. **Importation des Modules**
 
     ```python
@@ -38,6 +46,7 @@ Ensuite, nous avons utilisé LABEL STUDIO pour annoter les images avec les label
 2. **Chargement des Variables d'Environnement**
 
     ```python
+    # Variables d'environnement qui prendront les valeurs du fichier .env à la racine du projet
     load_dotenv()
     TOKEN = os.getenv("TOKEN")
     IMAGE_URL = os.getenv("IMAGE_URL")
@@ -57,10 +66,11 @@ Ensuite, nous avons utilisé LABEL STUDIO pour annoter les images avec les label
     - **Téléchargement d'Images**
 
         ```python
+        # Fonctions utilitaires pour les téléchargements d'images
         def download_image(url, destination, headers=None):
             try:
                 response = requests.get(url, headers=headers, timeout=10)
-                if response.status_code == 200:
+                if response.status_code == 200: # Vérifie si la requête a abouti
                     with open(destination, 'wb') as f:
                         f.write(response.content)
                     print(f"L'image {os.path.basename(destination)} a été téléchargée avec succès.")
@@ -75,6 +85,7 @@ Ensuite, nous avons utilisé LABEL STUDIO pour annoter les images avec les label
     - **Comparaison d'Images**
 
         ```python
+        # Fonctions utilitaires pour la comparaison d'images
         def is_identical(image1, image2):
             try:
                 hash1 = imagehash.average_hash(Image.open(image1)) # Calcul du hash de l'image 1 (image précédente)
@@ -89,6 +100,7 @@ Ensuite, nous avons utilisé LABEL STUDIO pour annoter les images avec les label
     - **Suppression d'Images**
 
         ```python
+        # Fonctions utilitaires pour la suppression d'images si elles sont identiques
         def remove_image(filename):
             if exists(filename): # Vérifie si le fichier existe
                 os.remove(filename)
@@ -97,6 +109,7 @@ Ensuite, nous avons utilisé LABEL STUDIO pour annoter les images avec les label
 5. **Fonction Principale pour Extraire des Images**
 
     ```python
+    # Fonction principale pour extraire les images à partir d'une URL
     def extract_image(loop=50, wait=60): # Extrait 50 images par défaut avec un intervalle de 60 secondes
         images = sorted([f for f in os.listdir(IMAGES_DIR) if f.endswith('.jpg')])
         last = join(IMAGES_DIR, images[-1]) if images else None
@@ -112,9 +125,10 @@ Ensuite, nous avons utilisé LABEL STUDIO pour annoter les images avec les label
             last = filename
     ```
 
-6. **Fonction Principale pour Traiter le Fichier JSON**
+6. **Fonction pour Traiter le Fichier JSON**
 
     ```python
+    # Fonction principale pour traiter le fichier JSON et télécharger les images
     def process_json(json_file):
         if not exists(json_file):
             print("Fichier JSON introuvable.")
@@ -126,7 +140,7 @@ Ensuite, nous avons utilisé LABEL STUDIO pour annoter les images avec les label
         failed_downloads = [] # Liste des images qui n'ont pas été téléchargées
         for item in data:
             try:
-                image_url = f"{BASE_URL}{item['data']['image']}"
+                image_url = f"{BASE_URL}{item['data']['image']}" # URL de l'image complète
                 filename = item['file_upload']
             except:
                 print('Erreur lors de la récupération des données. JSON Malformé.')
@@ -141,8 +155,37 @@ Ensuite, nous avons utilisé LABEL STUDIO pour annoter les images avec les label
         else:
             print("\nToutes les images ont été téléchargées avec succès.")
     ```
+7. **Fonction Principale pour lancer le script**
+    ```python
+    # Les 2 options pour lancer le script
+    def main():
+        args = sys.argv[1:]
+        if args:
+            # Cette partie du script permet de télécharger les images à partir d'une URL
+            if args[0] == 'extract':
+                
+                if not exists(IMAGES_DIR):
+                    os.makedirs(IMAGES_DIR)
+                
+                try:
+                    extract_image(loop=int(args[1]))
+                except:
+                    print("Valeur incorrecte pour le nombre de boucles. Utilisation de la valeur par défaut (50 boucles).")
+                    extract_image(loop=50, wait=60)
 
-7. **Point d'Entrée du Script**
+            # Cette partie du script permet de télécharger les images à partir d'un fichier JSON
+            elif args[0] == 'annotations':
+
+                if not exists(IMAGES_LABELS_DIR):
+                    os.makedirs(IMAGES_LABELS_DIR)
+
+                if len(args) >= 2:
+                    process_json(args[1])
+                else:
+                    print("Veuillez fournir le chemin vers l'export JSON.")
+    ```
+
+8. **Point d'Entrée du Script**
 
     ```python
     if __name__ == "__main__":
