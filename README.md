@@ -40,7 +40,7 @@ Avant de commencer, assurez-vous d'avoir les éléments suivants installés sur 
 3. **Installer les dépendances Python :**
 
     ```bash
-    # Étape 4 : Via le terminal du projet
+    # Étape 5 : Via le terminal du projet
     pip install -rf requirements.txt
     ```
 
