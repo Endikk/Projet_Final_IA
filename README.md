@@ -6,7 +6,7 @@ Ce fichier README fournit des instructions sur la façon d'installer et de déma
 
 Avant de commencer, assurez-vous d'avoir les éléments suivants installés sur votre système :
 
-- [Python](https://www.python.org/) (version 3.11 ou supérieure)
+- [Conda](https://www.anaconda.com/download/success) (Download Anaconda)
 
 ## Étapes d'Installation
 
