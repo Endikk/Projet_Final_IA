@@ -102,4 +102,6 @@ Une fois l'installation terminée, vous pouvez utiliser le script Python pour ef
 
     pip freeze > requirements.txt 
     ```
+    
+- Ne vous inquiétez pas, les dossiers contenant les images se créent automatiquement.
 ---
