@@ -28,31 +28,41 @@ Avant de commencer, assurez-vous d'avoir les éléments suivants installés sur 
     cd C:\Users\labonde\Documents\Cours_CESI\
 
     # Étape 2 :
-    git clone lienduprojet
+    git clone LienDuProjet
 
-    # Étape 3 :    
-    cd Projet_Final_IA
-
-    # Étape 4 : Pour ouvrir le projet
-    code .
+    # Étape 3 :
+    cd IA_Projet
     ```
 
 3. **Installer les dépendances Python :**
 
     ```bash
-    # Étape 5 : Via le terminal du projet
+    # Étape 4 : Via le terminal du projet
     pip install -rf requirements.txt
     ```
 
-4. **Créer un fichier `.env` :**
+4. **Ouvrir directement vers la direction du code :**
 
-    Créez un fichier `.env` à la racine du projet et ajoutez les variables d'environnement nécessaires. Vous avez par exemple le fichier .env_exemple.
+    ```bash
+    # Étape 5 : Pour ouvrir le projet
+    code .
+    ```
+
+5. **Créer un fichier `.env` :**
+
+    Créez un fichier `.env` à la racine du projet et ajoutez les variables d'environnement nécessaires. Vous avez pour exemple le fichier .env_exemple.
 
     ```plaintext
     TOKEN=votre_token
     IMAGE_URL=url_de_l'image
     ```
     Remplacez `votre_token` par votre token de Label Studio et `url_de_l'image` par l'URL de l'image.
+
+6. **Exporter votre `.json` :**
+
+    Exportez votre fichier JSON depuis votre Label Studio et placez-le à la racine du projet (vous pouvez le renommer comme vous le souhaitez).
+
+    Si vous pensez avoir oublié un fichier, vérifiez la structure du projet dans le technical_review.
 
 ## Utilisation
 
@@ -86,7 +96,7 @@ Une fois l'installation terminée, vous pouvez utiliser le script Python pour ef
 
 - Assurez-vous d'avoir configuré les variables d'environnement nécessaires dans le fichier `.env` avant d'exécuter le script.
 
-- Si vous avez rajouter des importations dans votre code vous pouvez regénérer le requirements
+- Si vous avez ajouté des importations dans votre code, vous pouvez régénérer le requirements.
     ```bash
     Génere le fichier requirements.txt 
 
