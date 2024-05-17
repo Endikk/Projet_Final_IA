@@ -38,7 +38,7 @@ Avant de commencer, assurez-vous d'avoir les éléments suivants installés sur 
 
     ```bash
     # Étape 4 : Via le terminal du projet
-    pip install -rf requirements.txt
+    pip install -r requirements.txt
     ```
 
 4. **Ouvrir directement vers la direction du code :**
