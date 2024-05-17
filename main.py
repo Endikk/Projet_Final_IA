@@ -27,7 +27,7 @@ IMAGES_LABELS_DIR = join(PROJECT_PATH, 'images_labels')
 def download_image(url, destination, headers=None):
     try:
         response = requests.get(url, headers=headers, timeout=10)
-        if response.status_code == 200:
+        if response.status_code == 200: # Vérifie si la requête a abouti
             with open(destination, 'wb') as f:
                 f.write(response.content)
             print(f"\nL'image {os.path.basename(destination)} a été téléchargée avec succès.")
@@ -85,7 +85,7 @@ def process_json(json_file):
     failed_downloads = [] # Liste des images qui n'ont pas été téléchargées
     for item in data:
         try:
-            image_url = f"{BASE_URL}{item['data']['image']}"
+            image_url = f"{BASE_URL}{item['data']['image']}" # URL de l'image complète
             filename = item['file_upload']
         except:
             print('Erreur lors de la récupération des données. JSON Malformé.')
