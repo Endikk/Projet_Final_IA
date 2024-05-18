@@ -28,10 +28,10 @@ Avant de commencer, assurez-vous d'avoir les éléments suivants installés sur 
     cd C:\Users\labonde\Documents\Cours_CESI\
 
     # Étape 2 :
-    git clone LienDuProjet
+    git clone https://github.com/Endikk/Vehicule_Recognition_ProjetIA.git
 
     # Étape 3 :
-    cd IA_Projet
+    cd Vehicule_Recognition_ProjetIA
     ```
 
 3. **Installer les dépendances Python :**
