@@ -1,6 +1,9 @@
+#import locale
 import os
 import json
 import requests
+
+#import externe
 from time import sleep
 from datetime import datetime
 from os.path import join, realpath, dirname, exists
@@ -24,7 +27,6 @@ MASK_PATH = join(PROJECT_PATH, 'src','models','ref_image.png')  # Chemin du fich
 
 # Charger les variables d'environnement
 IMAGE_URL = os.getenv("IMAGE_URL")
-TOKEN = os.getenv("TOKEN")
 
 # Fonction pour télécharger une image
 def download_image(url, destination, headers=None):
