@@ -59,7 +59,7 @@ Avant de commencer, assurez-vous d'avoir les éléments suivants installés sur 
 
 6. **Téléchargement du modèle**
    Le modèle est bien trop volumieux pour entrer dans GITHUB, veuillez le télécharger le mettre dans le dossier src\models !
-   [Le lien du modèle YOLOV5]([https://download.data.grandlyon.com/files/rdata/pvo_patrimoine_voirie.pvocameracriter/CWL9018.JPG](https://github.com/ultralytics/assets/releases/download/v8.2.0/yolov5x6u.pt))
+   [Le lien du modèle YOLOV5](https://download.data.grandlyon.com/files/rdata/pvo_patrimoine_voirie.pvocameracriter/CWL9018.JPG](https://github.com/ultralytics/assets/releases/download/v8.2.0/yolov5x6u.pt)
    
 ## Utilisation
 
