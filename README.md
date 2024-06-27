@@ -57,6 +57,10 @@ Avant de commencer, assurez-vous d'avoir les éléments suivants installés sur 
     ```
     Remplacez `url_de_l'image` par l'URL de l'image.
 
+6. **Téléchargement du modèle**
+   Le modèle est bien trop volumieux pour entrer dans GITHUB, veuillez le télécharger le mettre dans le dossier src\models !
+   [Le lien du modèle YOLOV5]([https://download.data.grandlyon.com/files/rdata/pvo_patrimoine_voirie.pvocameracriter/CWL9018.JPG](https://github.com/ultralytics/assets/releases/download/v8.2.0/yolov5x6u.pt))
+   
 ## Utilisation
 
 Une fois l'installation terminée, vous pouvez utiliser les script Python pour effectuer différentes opérations. Voici les utilisations possibles :
@@ -90,5 +94,7 @@ Une fois l'installation terminée, vous pouvez utiliser les script Python pour e
     ```
 - Ne vous inquiétez pas, les dossiers contenant les images se créent automatiquement.
 
-- Ce qu'il nous reste à faire est de relabelliser nos images pour qu'elles correspondent aux classes de YOLO, afin d'obtenir une matrice de confusion correcte (par exemple, les vélos et les piétons ensemble).
+## Ce qu'il nous reste à faire
+- Relabelliser nos images pour qu'elles correspondent aux classes de YOLO, afin d'obtenir une matrice de confusion correcte (par exemple, les vélos et les piétons ensemble).
+- Télécharger automatiquement mon modèle
 ---
