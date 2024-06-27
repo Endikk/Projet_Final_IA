@@ -1,193 +1,132 @@
-## Description du Projet et l'Aspect technique
+# Revue technique du projet
 
-### Explication de ce Projet
+## Aperçu
+Ce projet vise à créer un système de surveillance du trafic en utilisant des modèles de détection d'objets YOLO (You Only Look Once). Le système télécharge des images à partir d'une URL spécifiée, traite ces images pour détecter les véhicules, et affiche les résultats dans un tableau de bord convivial à l'aide de Streamlit.
 
-Ce projet a été conçu dans le cadre de notre Bachelor en Intelligence Artificielle. L'objectif est de récupérer des images à partir d'une caméra de la Métropole de Lyon accessible via une URL. Notre script télécharge ces images toutes les 60 secondes.   
-Ensuite, nous avons utilisé LABEL STUDIO pour annoter les images avec les labels suivants : Car, Pedestrian, Truck, Scooter, Motorbike, Bus, Bicycle, et Motor Scooter. Une fois les annotations terminées, les images annotées sont exportées au format JSON. Une autre partie de notre script peut alors récupérer ces images annotées pour les traiter ultérieurement.
+## Structure du projet
+### main.py
+**Description :**
 
-### Structure du Projet
+Objectif : Le script principal orchestre le téléchargement des images, l'application d'un masque, la détection des véhicules et l'enregistrement des résultats.
+Principales bibliothèques utilisées : requests, PIL, imagehash, numpy, cv2, torch, datetime.
 
-- **`.env`** : Contient les variables d'environnement.
-- **`main.py`** : Contient les fonctions pour télécharger, comparer et gérer les images.
-- **`requirements.txt`** : Contient les importations des modules systèmes et tiers.
-- **`annotations.json`** : Votre fichier JSON provenant de votre label studio.
-- **Répertoires** :
-  - `images` : Stocke les images téléchargées. (Création automatique)
-  - `images_labels` : Stocke les images annotées. (Création automatique)
+**Principaux composants :**
 
-### Détails Techniques
+- Constantes et configuration de l'environnement :
+    - PROJECT_PATH, IMAGES_DIR, RESULTS_FILE, MASK_PATH définissent les chemins utilisés dans le script.
+    - IMAGE_URL est récupérée à partir des variables d'environnement.
 
-**Label Studio**
+- Fonctions d'aide :
+    - download_image(url, destination, headers=None) : Télécharge une image à partir de l'URL fournie.
+    - is_identical(image1, image2) : Vérifie si deux images sont identiques en utilisant le hachage moyen.
+    - remove_image(filename) : Supprime le fichier image spécifié.
 
-- Nous avons annoté nos images via Label Studio avec plusieurs types de labels différents, puis nous les avons exportées au format JSON. C'est ce que vous devez récupérer dans votre projet.
+- Fonction de traitement principale :
+    - extract_and_identify_vehicles(loop=50, wait=60) : Gère la logique principale du téléchargement des images, de la vérification des doublons, de l'application des masques, de la détection des véhicules à l'aide d'un modèle, et de l'enregistrement des résultats.
 
-- N'oubliez pas de trouver votre token dans votre compte et de le mettre dans le fichier .env afin que Label Studio et le script puissent communiquer entre eux.
+- Point d'entrée :
+    - Exécute la fonction extract_and_identify_vehicles si le script est exécuté directement.
 
-- Pour accéder à Label Studio, vous pouvez utiliser [ce lien](https://app.heartex.com/).
+### model.py
+**Description :**
 
-1. **Importation des Modules**
+Objectif : Contient des classes pour différents modèles YOLO et des méthodes de détection d'objets et de traitement d'images.
+Principales bibliothèques utilisées : PIL, cv2, torch, ultralytics, hashlib, pandas.
 
-    ```python
-    # Importation des modules système
-    import os
-    import sys
-    from time import sleep
-    from datetime import datetime
-    import json
-    from os.path import join, realpath, dirname, exists
+**Principaux composants :**
 
-    # Importation des modules tiers
-    from dotenv import load_dotenv
-    from PIL import Image
-    import imagehash
-    import requests
-    ```
+- Classe BaseModel :
+    - Initialise le modèle YOLO.
+    - Fournit des méthodes pour détecter des objets dans des images, dessiner des boîtes englobantes et convertir les résultats de détection au format COCO.
+    - Comprend des fonctions utilitaires pour générer des couleurs uniques pour les boîtes englobantes et calculer des métriques telles que la précision, le rappel et le score F1.
 
-2. **Chargement des Variables d'Environnement**
+- Variantes du modèle :
+    - SmallModel, MediumModel, LargeModel : Sous-classes de BaseModel qui initialisent des versions spécifiques du modèle YOLO.
 
-    ```python
-    # Variables d'environnement qui prendront les valeurs du fichier .env à la racine du projet
-    load_dotenv()
-    TOKEN = os.getenv("TOKEN")
-    IMAGE_URL = os.getenv("IMAGE_URL")
-    BASE_URL = "https://app.heartex.com/storage-data/uploaded/?filepath="
-    ```
+### interface.py
+**Description :**
 
-3. **Définition des Chemins**
+Objectif : Implémente un tableau de bord Streamlit pour visualiser et interagir avec les résultats de détection des véhicules.
+Principales bibliothèques utilisées : streamlit, pandas, plotly, PIL, streamlit_autorefresh.
 
-    ```python
-    PROJECT_PATH = dirname(realpath(__file__))
-    IMAGES_DIR = join(PROJECT_PATH, 'images')
-    IMAGES_LABELS_DIR = join(PROJECT_PATH, 'images_labels')
-    ```
+**Principaux composants :**
 
-4. **Fonctions Utilitaires**
+- Fonctions d'aide :
+    - clean_date(date_str) : Convertit une chaîne de caractères en objet datetime.
+    - load_data() : Charge et prépare les données pour l'analyse.
+    - load_vehicle_results() : Charge les résultats des véhicules détectés.
 
-    - **Téléchargement d'Images**
+- Pages du tableau de bord :
+    - home() : Affiche la page d'accueil avec une introduction et les principales fonctionnalités.
+    - label_image(df) : Permet d'analyser les catégories d'images avec des filtres et des graphiques interactifs.
+    - camera_directe() : Permet de visualiser des flux de caméra en direct et les résultats de détection des véhicules.
 
-        ```python
-        # Fonctions utilitaires pour les téléchargements d'images
-        def download_image(url, destination, headers=None):
-            try:
+- Configuration de la page :
+    - Utilise st.set_page_config pour configurer le titre, l'icône et la mise en page de la page.
+    - Charge les données avec load_data().
+    - Crée une barre de navigation avec option_menu.
+
+- Logique de navigation :
+    - Affiche différentes pages en fonction de la sélection dans la barre de navigation.
+
+**Extraits de code clés :**
+
+- Téléchargement d'images :
+```python
+def download_image(url, destination, headers=None):
+        try:
                 response = requests.get(url, headers=headers, timeout=10)
-                if response.status_code == 200: # Vérifie si la requête a abouti
-                    with open(destination, 'wb') as f:
-                        f.write(response.content)
-                    print(f"L'image {os.path.basename(destination)} a été téléchargée avec succès.")
-                    return True
+                if response.status_code == 200:
+                        with open(destination, 'wb') as f:
+                                f.write(response.content)
+                        print(f"Téléchargement réussi de l'image {os.path.basename(destination)}.")
+                        return True
                 else:
-                    print(f"Échec du téléchargement de l'image {destination}. {response.status_code} {response.reason}")
-            except requests.RequestException as e:
-                print(f"Erreur lors du téléchargement de l'image {destination}. Détails: {e}")
-            return False
-        ```
+                        print(f"Échec du téléchargement de l'image {destination}. {response.status_code} {response.reason}")
+        except requests.RequestException as e:
+                print(f"Erreur lors du téléchargement de l'image {destination}. Détails : {e}")
+        return False
+```
 
-    - **Comparaison d'Images**
-
-        ```python
-        # Fonctions utilitaires pour la comparaison d'images
-        def is_identical(image1, image2):
-            try:
-                hash1 = imagehash.average_hash(Image.open(image1)) # Calcul du hash de l'image 1 (image précédente)
-                hash2 = imagehash.average_hash(Image.open(image2)) # Calcul du hash de l'image 2 (image actuelle)
-                if (hash1 - hash2) == 0:
-                    return True
-            except Exception:
-                pass
-            return False
-        ```
-
-    - **Suppression d'Images**
-
-        ```python
-        # Fonctions utilitaires pour la suppression d'images si elles sont identiques
-        def remove_image(filename):
-            if exists(filename): # Vérifie si le fichier existe
-                os.remove(filename)
-        ```
-
-5. **Fonction Principale pour Extraire des Images**
-
-    ```python
-    # Fonction principale pour extraire les images à partir d'une URL
-    def extract_image(loop=50, wait=60): # Extrait 50 images par défaut avec un intervalle de 60 secondes
-        images = sorted([f for f in os.listdir(IMAGES_DIR) if f.endswith('.jpg')])
-        last = join(IMAGES_DIR, images[-1]) if images else None
-        for i in range(loop):
-            if i > 0:
-                sleep(wait)
-            # Permet de renommer les images avec un timestamp en format YmdHMS
-            filename = join(IMAGES_DIR, f"{datetime.now().strftime('%Y%m%d%H%M%S')}.jpg")
-            download_image(IMAGE_URL, filename)
-            if is_identical(last, filename):
-                print(f'Image {os.path.basename(filename)} identique à la précédente. Suppression...')
-                remove_image(filename)
-            last = filename
-    ```
-
-6. **Fonction pour Traiter le Fichier JSON**
-
-    ```python
-    # Fonction principale pour traiter le fichier JSON et télécharger les images
-    def process_json(json_file):
-        if not exists(json_file):
-            print("Fichier JSON introuvable.")
-            return
-
-        with open(json_file, 'r') as file:
-            data = json.load(file)
+- Détection d'objets et dessin de boîtes englobantes :
+```python
+def detect_and_draw_on_image(self, image, save_path):
+        results = self.model.predict(image, classes=[0, 1, 2, 3, 5, 7], conf=0.2, iou=0.8, imgsz=640)
+        df = pd.DataFrame(results[0].boxes.data.cpu().numpy(), columns=["xmin", "ymin", "xmax", "ymax", "confidence", "class"])
+        df["label"] = df["class"].apply(lambda x: results[0].names[int(x)])
         
-        failed_downloads = [] # Liste des images qui n'ont pas été téléchargées
-        for item in data:
-            try:
-                image_url = f"{BASE_URL}{item['data']['image']}" # URL de l'image complète
-                filename = item['file_upload']
-            except:
-                print('Erreur lors de la récupération des données. JSON Malformé.')
-            
-            if not exists(join(IMAGES_LABELS_DIR, filename)):
-                if not download_image(image_url, join(IMAGES_LABELS_DIR, filename), headers={"Authorization": f"Token {TOKEN}"}):
-                    failed_downloads.append(filename)
+        for index, row in df.iterrows():
+                color = self.get_unique_color(row["label"])
+                cv2.rectangle(image, (int(row["xmin"]), int(row["ymin"])), (int(row["xmax"]), int(row["ymax"])), color, 2)
+                label = f"{row['label']} {row['confidence']:.2f}"
+                cv2.putText(image, label, (int(row["xmin"]), int(row["ymin"] - 10)), cv2.FONT_HERSHEY_SIMPLEX, 0.9, color, 2)
+        
+        cv2.imwrite(save_path, image)
+```
 
-        if failed_downloads:
-            print(f"\nÉchec du téléchargement de certaines images. {len(data)-len(failed_downloads)}/{len(data)}")
-            print(failed_downloads)
-        else:
-            print("\nToutes les images ont été téléchargées avec succès.")
-    ```
-7. **Fonction Principale pour lancer le script**
-    ```python
-    # Les 2 options pour lancer le script
-    def main():
-        args = sys.argv[1:]
-        if args:
-            # Cette partie du script permet de télécharger les images à partir d'une URL
-            if args[0] == 'extract':
-                
-                if not exists(IMAGES_DIR):
-                    os.makedirs(IMAGES_DIR)
-                
-                try:
-                    extract_image(loop=int(args[1]))
-                except:
-                    print("Valeur incorrecte pour le nombre de boucles. Utilisation de la valeur par défaut (50 boucles).")
-                    extract_image(loop=50, wait=60)
+- Chargement et préparation des données :
+```python
+def load_data():
+        try:
+                with open('class_counts.json', 'r') as f:
+                        data = json.load(f)
+                records = []
+                for key, value in data.items():
+                        if key != "Total":
+                                record = {"Nom": value["Nom"], "Filename": key}
+                                record.update(value["Categorie"])
+                                records.append(record)
+                df = pd.DataFrame(records)
+                df['Date'] = df['Nom'].apply(clean_date)
+                df = df.dropna(subset=['Date'])
+                return df
+        except (json.JSONDecodeError, KeyError) as e:
+                st.error("Error loading data. The service is under maintenance. Please try again later.")
+                return pd.DataFrame()  # Returns an empty DataFrame
+        except FileNotFoundError:
+                st.error("File 'class_counts.json' not found. Please check the file path.")
+                return pd.DataFrame()  # Returns an empty DataFrame
+```
 
-            # Cette partie du script permet de télécharger les images à partir d'un fichier JSON
-            elif args[0] == 'annotations':
-
-                if not exists(IMAGES_LABELS_DIR):
-                    os.makedirs(IMAGES_LABELS_DIR)
-
-                if len(args) >= 2:
-                    process_json(args[1])
-                else:
-                    print("Veuillez fournir le chemin vers l'export JSON.")
-    ```
-
-8. **Point d'Entrée du Script**
-
-    ```python
-    if __name__ == "__main__":
-        main()
-    ```
+## Conclusion
+This project is well-structured and utilizes modern libraries for image processing and machine learning. The main functionalities are well-defined, ranging from image downloading to vehicle detection and displaying the results in an intuitive user interface. The key code snippets and utility functions effectively handle complex tasks of object detection and image manipulation.
