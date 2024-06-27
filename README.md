@@ -28,17 +28,17 @@ Avant de commencer, assurez-vous d'avoir les éléments suivants installés sur 
     cd C:\Users\labonde\Documents\Cours_CESI\
 
     # Étape 2 :
-    git clone https://github.com/Endikk/Vehicule_Recognition_ProjetIA.git
+    git clone LienDuProjet
 
     # Étape 3 :
-    cd Vehicule_Recognition_ProjetIA
+    cd IA_Projet
     ```
 
 3. **Installer les dépendances Python :**
 
     ```bash
     # Étape 4 : Via le terminal du projet
-    pip install -r requirements.txt
+    pip install -rf requirements.txt
     ```
 
 4. **Ouvrir directement vers la direction du code :**
@@ -53,55 +53,42 @@ Avant de commencer, assurez-vous d'avoir les éléments suivants installés sur 
     Créez un fichier `.env` à la racine du projet et ajoutez les variables d'environnement nécessaires. Vous avez pour exemple le fichier .env_exemple.
 
     ```plaintext
-    TOKEN=votre_token
     IMAGE_URL=url_de_l'image
     ```
-    Remplacez `votre_token` par votre token de Label Studio et `url_de_l'image` par l'URL de l'image.
-
-6. **Exporter votre `.json` :**
-
-    Exportez votre fichier JSON depuis votre Label Studio et placez-le à la racine du projet (vous pouvez le renommer comme vous le souhaitez).
-
-    Si vous pensez avoir oublié un fichier, vérifiez la structure du projet dans le technical_review.
+    Remplacez `url_de_l'image` par l'URL de l'image.
 
 ## Utilisation
 
-Une fois l'installation terminée, vous pouvez utiliser le script Python pour effectuer différentes opérations. Voici les utilisations possibles :
+Une fois l'installation terminée, vous pouvez utiliser les script Python pour effectuer différentes opérations. Voici les utilisations possibles :
 
-- **Extraire les images de l'URL :**
+- **Lancement des images en temps réel :**
 
     ```bash
-    # Extraction automatique de 50 images par seconde.
-    python main.py extract
-    
-    # Vous pouvez spécifier le nombre d'images par seconde que vous souhaitez.
-    python main.py extract 80
+    # Premier Terminal 
+    python .\main.py
     ```
-
     Cela extraira les images de l'URL spécifiée et les sauvegardera dans le répertoire `images`.
 
-- **Télécharger les annotations depuis un fichier JSON :**
-
+- **Lancement de l'interface web (streamlit)**
     ```bash
-    # Vous devez mettre le nom de votre fichier JSON
-    python main.py annotations chemin_vers_le_fichier_json
-
-    # Exemple de votre fichier JSON 
-    python .\main.py annotations .\export_67163_project-67163-at-2024-05-17-11-52-bb58ed83.json
+    # Deuxième Terminal
+    streamlit run .\interface.py
     ```
-
-    Cela téléchargera les annotations à partir du fichier JSON spécifié et les sauvegardera dans le répertoire `images_labels`.
+- **L'interface que vous devriez utiliser.**
+![Description de l'image](src/models/trafic_IA.png)
 
 ## Remarque
 
-- Assurez-vous d'avoir configuré les variables d'environnement nécessaires dans le fichier `.env` avant d'exécuter le script.
-
+- Assurez-vous d'avoir configuré les variables d'environnement nécessaires dans le fichier `.env` avant d'exécuter le script. 
+- IMAGE_URL cela doit-être URL de l'image du Grand Lyon, raccourci avec 
+[ce lien](https://download.data.grandlyon.com/files/rdata/pvo_patrimoine_voirie.pvocameracriter/CWL9018.JPG)
 - Si vous avez ajouté des importations dans votre code, vous pouvez régénérer le requirements.
     ```bash
     Génere le fichier requirements.txt 
 
     pip freeze > requirements.txt 
     ```
-    
 - Ne vous inquiétez pas, les dossiers contenant les images se créent automatiquement.
+
+- Ce qu'il nous reste à faire est de relabelliser nos images pour qu'elles correspondent aux classes de YOLO, afin d'obtenir une matrice de confusion correcte (par exemple, les vélos et les piétons ensemble).
 ---
